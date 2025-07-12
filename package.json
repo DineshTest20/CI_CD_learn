@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "test": "echo 'Skipping lint - ESLint not configured yet'"
+    "export": "next export"
   },
   "dependencies": {
     "next": "14.2.21",
