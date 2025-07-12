@@ -1,40 +1,43 @@
 name: build-test-deploy
+
 on: push
+
 jobs: 
   build:
     runs-on: ubuntu-latest
     steps: 
-      - name: checkout repo
+      - name: Checkout repo
         uses: actions/checkout@v3
-      - name: use node.js
+      - name: Use Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18.x'
       - run: npm install
       - run: npm run build
+
   test: 
     needs: build
     runs-on: ubuntu-latest
     steps: 
-      - name: checkout repo
+      - name: Checkout repo
         uses: actions/checkout@v3
-      - name: use node.js
+      - name: Use Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18.x'
       - run: npm install
       - run: npm test
+
   deployment:
     needs: test
+    runs-on: ubuntu-latest
     permissions:
       contents: write
       pages: write
       id-token: write
     environment:
-      name: production
+      name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -47,15 +50,13 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build and export
-        run: |
-          npm run build
-          
+      - name: Build (export output is auto-generated to ./out)
+        run: npm run build
 
-      - name: Configure Pages
+      - name: Configure GitHub Pages
         uses: actions/configure-pages@v3
 
-      - name: Upload artifact (workaround)
+      - name: Upload static site to artifact
         uses: actions/upload-artifact@v4
         with:
           name: github-pages
@@ -64,4 +65,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
-  
